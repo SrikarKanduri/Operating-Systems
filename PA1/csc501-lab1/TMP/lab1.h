@@ -1,0 +1,2 @@
+#define RANDOMSCHED 1
+#define LINUXSCHED 2

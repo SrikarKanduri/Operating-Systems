@@ -1,0 +1,29 @@
+1. 
+Advantages of Random Scheduling:
+i)  Overcomes starvation caused by the default XINU scheduler.
+ii) Less computation overhead, fast.
+
+Disadvantage of Random Scheduling: Must have a good random number generator to be efficient.
+
+
+Advantages of Linux-like Scheduling:
+i)  Overcomes starvation caused by the default XINU scheduler.
+ii) As processes get to carry their unused time quantum to the next epoch, scheduling is fair despite the priorities.
+
+Disadvantage of Linux-like Scheduling: A new process with high priority has to wait until the current epoch ends to be scheduled.
+
+Advantages of XINU's Scheduling: 
+i)  Provides a good mechanism where the relative importance of each process may be precisely defined.
+ii) Every process gets an equal share of the CPU.
+
+Disadvantage of XINU's Scheduling: If high priority processes use up a lot of CPU time, lower priority processes may starve and be postponed indefinitely, leading to starvation. 
+
+2.
+P1's priority can be 20, P2's can be 30 and P3's 50. 
+For n processes, as the CPU time is split between these n processes, the desired CPU-allocation-percentage of each process can be its priority (For eg. If we have a process with CPU allocation x%, its priority can be x).
+
+3.
+The default XINU scheduler selects process with the highest priority. NULL process has a priority of 0 which means it is chosen only when no other processes are in the ready queue.
+
+The Random scheduler selects NULL process if and only if the sum of priorities is 0, that is, if NULL is the only process in the ready queue. This is because the scheduler will generate a random number between 0 and total-priority-sum minus 1, but for NULL process to be chosen, we require the number to be total-priority-sum. 
+

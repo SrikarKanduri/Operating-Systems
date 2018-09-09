@@ -1,0 +1,30 @@
+1.
+
+1.1.
+Priority ceiling protocol:
+(Reference: https://en.wikipedia.org/wiki/Priority_ceiling_protocol)
+A synchronization protocol for shared resources to avoid unbounded priority inversion and mutual deadlock due to wrong nesting of critical sections. In this protocol each resource is assigned a priority ceiling, which is a priority equal to the highest priority of any task which may lock the resource. The protocol works by temporarily raising the priorities of tasks in certain situations. 
+
+1.2. The following test case shows a scenario where procA (pprio: 30), procB (pprio: 40) and procC (pprio: 50) are to be executed. procA initially runs, along with procB concurrently. When procC requests (lock/semaphore) and waits, control is transferred to B (pprio: 40) in the default XINU implementation with B completing its execution, whereas in the priority inheritance implementation, the control is transferred to A (as it inherits prio from procC and pprio becomes 50).
+
+Processes Execution using semaphores:
+  procA: to acquire sem
+  procA: acquired sem
+  Process procB running.
+  procC: to acquire sem    //procC waits
+  Process procB finished running. //procB is executed
+  procA: to release sem
+  procC: acquired sem
+  procC: to release sem
+
+Processes Execution using Priority Inheritance:
+  procA: to acquire lock
+  procA: acquired lock
+  Process procB running.
+  procC: to acquire lock          //procC waits
+  procA: to release lock          //procA is executed (unlike the semaphores) as procA's inherited priority is more than B's.
+  procC: acquired lock
+  Process procB finished running.
+  procC: to release lock
+
+2. One potential issue is the way global_buf is accessed. Consider a reader process which writes data (time) to the global_buf using buffer_add() but preempted, before updating the size of the buffer, by another high-priority reader process. The result is that the data written to the buffer by the low-priority process is lost.

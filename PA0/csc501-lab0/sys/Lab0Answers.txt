@@ -1,0 +1,77 @@
+
+1.
+
+
+                                                                          Limit
+                                                                        0x00ffdffc         Base
+                                                                            |   SP      0x00ffeff8
+            etext=        edata=     end=                                   | 0x00ffefa0   |
+0x0      0x0001ca44   0x000215bc  0x0002c0f8                                |    |         |
++--------+-----------+-----------+-----------+----------------------------+-v----v---------v-+
+|        |           |           |           |                            |                  |
+|   text |  data     |  bss      |   heap    |           FREE             | Process [main]   |
+|        |           |           |           |                            | stack            |
++--------+-----------+-----------+-----------+----------------------------+------------------+
+
+
+2. 
+
+The stack address before calling printtos is 0x00ffefd0.
+The stack address before calling printtos is 0x00ffefc8.
+
+A return address is pushed into the stack between the two points.
+
++-------------+
+|             |
+|             |
+|             |     main()
+|             |
+|             |
+|             |<----- Before: 0x00ffefd0
++-------------+
+|   Return    |<----- content at [0x00ffefcc]: 0x00015817
+|   Address   |
++-------------+
+|     EBP     |<----- After: 0x00ffefc8
++-------------+
+|     EBX     |   Printtos()
++-------------+
+|     EDI     |
++-------------+
+|     ESI     |
++-------------+
+|   local     |
+|  variable   |
+|     sp      |
++-------------+
+|   local     |
+|  variable   |
+|     bp      |
++-------------+
+
+3.
+
+The host machine we are using uses "Little endian byte format".
+
+Executing the following code snippet outputs "Litte Endian" (because last byte is stored first):
+        unsigned int x = 1;
+        char *y = (char *)&x;
+        char *format = (1 == y[0]) ? "Little Endian" : "Big Endian";
+        kprintf("%s",format);
+
+
+4.
+
+mov: copies the data item referred to by its first operand (i.e. register contents, memory contents, or a constant value) into the location referred to by its second operand (i.e. a register or memory)
+
+push: places its operand onto the top of the hardware supported stack in memory
+
+pusha: pushes all the general purpose registers onto the stack
+
+pop: removes the 4-byte data element from the top of the hardware-supported stack into the specified operand (i.e. register or memory location)
+
+popa:  pops all the general purpose registers off the stack in the reverse order of pusha
+
+5.
+
+No, the local variables are not shown because the compiler optimization is enabled in the Makefile.
